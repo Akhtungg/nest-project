@@ -31,6 +31,8 @@
 $ npm install
 ```
 
+rename .env.example to .env or .env.local and enter your database configuration and JWT values
+
 ## Compile and run the project
 
 ```bash

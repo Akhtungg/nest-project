@@ -1,0 +1,21 @@
+import {
+    IsEmail,
+    IsNotEmpty,
+    IsString,
+} from 'class-validator';
+import { GlobalRole } from 'src/db/user/user.entity';
+
+export class CreateUserDto {
+    @IsEmail()
+    @IsNotEmpty()
+    email: string;
+
+    @IsString()
+    password: string;
+
+    @IsNotEmpty()
+    name: string;
+
+    @IsNotEmpty()
+    role: GlobalRole;
+}
