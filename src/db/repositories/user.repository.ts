@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserEntity } from 'src/db/user/user.entity';
+import { UserEntity } from 'src/db/entities/user.entity';
 import { CreateUserDto } from 'src/dto/create.user.dto';
 import { DataSource, Repository } from 'typeorm';
 
@@ -12,12 +12,12 @@ export class UserRepository {
     }
 
     async createUser(data: CreateUserDto): Promise<UserEntity> {
-    try {
-      const user = this.userRepository.create(data);
-      return await this.userRepository.save(user);
-    } catch (error) {
-      throw error;
-    }
+        try {
+            const user = this.userRepository.create(data);
+            return await this.userRepository.save(user);
+        } catch (error) {
+            throw error;
+        }
     }
 
     async findAll(): Promise<UserEntity[]> {

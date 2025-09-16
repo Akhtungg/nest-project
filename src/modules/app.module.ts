@@ -3,6 +3,8 @@ import { TypeOrmComponent } from '../db/connect';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user.module';
 import { AuthModule } from './auth.module';
+import { ProjectModule } from './project.module';
+import { TaskModule } from './task.module';
 
 @Module({
     imports: [
@@ -13,6 +15,8 @@ import { AuthModule } from './auth.module';
         TypeOrmComponent,
         UserModule,
         AuthModule,
+        ProjectModule,
+        TaskModule,
     ],
     controllers: [],
     providers: [],

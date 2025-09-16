@@ -1,9 +1,5 @@
-import {
-    IsEmail,
-    IsNotEmpty,
-    IsString,
-} from 'class-validator';
-import { GlobalRole } from 'src/db/user/user.entity';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { GlobalRole } from 'src/db/entities/user.entity';
 
 export class CreateUserDto {
     @IsEmail()
