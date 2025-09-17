@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TaskController } from 'src/controllers/task.controller';
 import { TaskEntity } from 'src/db/entities/task.entity';

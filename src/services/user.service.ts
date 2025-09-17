@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/db/entities/user.entity';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/dto/create.user.dto';
 import { UserRepository } from 'src/db/repositories/user.repository';
@@ -16,7 +14,7 @@ export class UserService {
         const newUser = await this.userRepository.createUser({
             email: data.email,
             password: hash,
-            name: data.name,
+            fullname: data.fullname,
             role: data.role,
         });
 
@@ -31,8 +29,8 @@ export class UserService {
         return this.userRepository.findById(id);
     }
 
-    async findByEmail(id: string): Promise<UserEntity> {
-        return this.userRepository.findByEmail(id);
+    async findByEmail(email: string): Promise<UserEntity> {
+        return this.userRepository.findByEmail(email);
     }
 
     async delete(id: string): Promise<void> {

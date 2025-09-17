@@ -1,43 +1,67 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProjectEntity } from 'src/db/entities/project.entity';
-import { ProjectDto } from 'src/dto/project.dto';
+import {
+    Controller,
+    Get,
+    Post,
+    Put,
+    Delete,
+    Body,
+    Param,
+    UseGuards,
+    Req,
+} from '@nestjs/common';
+import {
+    ApiTags,
+    ApiOperation,
+    ApiResponse,
+    ApiBearerAuth,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/JWT/guards/jwt.guard';
+import { CreateProjectDto } from 'src/dto/create.project.dto';
+import { UpdateProjectDto } from 'src/dto/update.project.dto';
 import { ProjectService } from 'src/services/project.service';
 
-@Controller('project')
-@ApiTags('Project')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+@ApiTags('projects')
+@Controller('projects')
 export class ProjectController {
     constructor(private readonly projectService: ProjectService) {}
 
-    @Post('create')
-    @ApiOperation({ summary: 'Create a new project' })
-    @ApiBody({
-        schema: {
-            properties: {
-                name: { type: 'string', default: 'test' },
-                description: { type: 'string', default: 'test' },
-            },
-        },
-    })
-    @ApiResponse({
-        status: 201,
-        description: 'The project has been successfully created.',
-    })
-    @ApiResponse({ status: 400, description: 'Bad Request.' })
-    async createProject(@Body() data: ProjectDto) {
-        return await this.projectService.create(data);
+    @Post()
+    @ApiOperation({ summary: 'Create new project' })
+    @ApiResponse({ status: 201, description: 'Project created successfully' })
+    async createProject(
+        @Body() createProjectDto: CreateProjectDto,
+        @Req() req,
+    ) {
+        return this.projectService.createProject(createProjectDto, req.user.id);
     }
 
-    @Get('getAll')
-    @ApiOperation({ summary: 'Get all projects' })
-    @ApiResponse({ status: 200, description: 'Return all projects.' })
-    @ApiResponse({ status: 404, description: 'Projects not found.' })
-    async findAllProjects() {
-        return await this.projectService.findAll();
+    @Get(':projectId')
+    @ApiOperation({ summary: 'Get project by ID' })
+    @ApiResponse({ status: 200, description: 'Returns project details' })
+    @ApiResponse({ status: 404, description: 'Project not found' })
+    async getProject(@Param('projectId') projectId: string, @Req() req) {
+        return this.projectService.findOne(projectId, req.user.id);
     }
 
-    @Get(':id')
-    findOne(@Param('id') id: string): Promise<ProjectEntity> {
-        return this.projectService.findById(id);
+    @Put(':projectId')
+    @ApiOperation({ summary: 'Update project' })
+    async updateProject(
+        @Param('projectId') projectId: string,
+        @Body() updateProjectDto: UpdateProjectDto,
+        @Req() req,
+    ) {
+        return this.projectService.updateProject(
+            projectId,
+            updateProjectDto,
+            req.user.id,
+        );
+    }
+
+    @Delete(':projectId')
+    @ApiOperation({ summary: 'Delete project' })
+    async deleteProject(@Param('projectId') projectId: string, @Req() req) {
+        return this.projectService.deleteProject(projectId, req.user.id);
     }
 }

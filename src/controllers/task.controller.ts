@@ -1,9 +1,18 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+    ApiBearerAuth,
+    ApiBody,
+    ApiOperation,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
 import { TaskEntity } from 'src/db/entities/task.entity';
 import { TaskDto } from 'src/dto/task.dto';
+import { JwtAuthGuard } from 'src/JWT/guards/jwt.guard';
 import { TaskService } from 'src/services/task.service';
 
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @Controller('task')
 @ApiTags('Task')
 export class TaskController {

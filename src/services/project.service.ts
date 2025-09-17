@@ -1,32 +1,78 @@
-import { Injectable } from '@nestjs/common';
-import { ProjectEntity } from 'src/db/entities/project.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProjectRepository } from 'src/db/repositories/project.repository';
-import { ProjectDto } from 'src/dto/project.dto';
+import { ProjectAccessService } from './project-access.service';
+import { CreateProjectDto } from 'src/dto/create.project.dto';
+import { UpdateProjectDto } from 'src/dto/update.project.dto';
+import { ProjectRole } from 'src/db/entities/project-member.entity';
+import { ProjectMemberService } from './project-member.service';
 
 @Injectable()
 export class ProjectService {
-    constructor(private readonly projectRepository: ProjectRepository) {}
+    constructor(
+        private readonly projectRepository: ProjectRepository,
+        private readonly projectAccessService: ProjectAccessService,
+        private readonly projectMemberService: ProjectMemberService,
+    ) {}
 
-    async create(data: ProjectDto): Promise<ProjectEntity> {
-        return this.projectRepository.create({
-            name: data.name,
-            description: data.description,
-        });
+    async createProject(createProjectDto: CreateProjectDto, userId: string) {
+        const project = await this.projectRepository.create(createProjectDto);
+        //добавляем создателя как лида
+        await this.projectMemberService.addOwnerMember(userId, project.id);
+        return project;
     }
 
-    async findAll(): Promise<ProjectEntity[]> {
-        return this.projectRepository.findAll();
+    async findOne(projectId: string, userId: string) {
+        // Проверяем доступ к проекту
+        await this.projectAccessService.ensureProjectAccess(
+            userId,
+            projectId,
+            ProjectRole.VIEWER,
+        );
+
+        const project = await this.projectRepository.findById(projectId);
+        if (!project) {
+            throw new NotFoundException('Project not found');
+        }
+
+        return project;
     }
 
-    async findById(id: string): Promise<ProjectEntity> {
-        return this.projectRepository.findById(id);
+    async updateProject(
+        projectId: string,
+        updateProjectDto: UpdateProjectDto,
+        userId: string,
+    ) {
+        // Проверяем, что пользователь имеет права на обновление (MANAGER)
+        await this.projectAccessService.ensureProjectAccess(
+            userId,
+            projectId,
+            ProjectRole.MANAGER,
+        );
+
+        return this.projectRepository.update(projectId, updateProjectDto);
     }
 
-    async delete(id: string): Promise<void> {
-        return this.projectRepository.delete(id);
+    async deleteProject(projectId: string, userId: string) {
+        // Проверяем, что пользователь имеет права на удаление (MANAGER)
+        await this.projectAccessService.ensureProjectAccess(
+            userId,
+            projectId,
+            ProjectRole.MANAGER,
+        );
+
+        await this.projectRepository.delete(projectId);
+        return { message: 'Project deleted successfully' };
     }
 
-    async getAll(): Promise<ProjectEntity[]> {
-        return this.projectRepository.findAll();
+    async userCanAccessProject(
+        userId: string,
+        projectId: string,
+        requiredRole: ProjectRole,
+    ): Promise<boolean> {
+        return this.projectAccessService.checkUserProjectAccess(
+            userId,
+            projectId,
+            requiredRole,
+        );
     }
 }

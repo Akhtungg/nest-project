@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { AuthService } from 'src/services/auth.service';
@@ -18,6 +18,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
             throw new UnauthorizedException('Неверный логин или пароль');
         }
 
-        return { user };
+        return user;
     }
 }

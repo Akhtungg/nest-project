@@ -1,7 +1,13 @@
-import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserEntity } from './user.entity';
 import { ProjectEntity } from './project.entity';
+import { ProjectRole } from './project-member.entity';
 
 export enum TaskStatus {
     TODO = 'todo',
@@ -20,6 +26,12 @@ export class TaskEntity {
     @Column({ nullable: true })
     description: string;
 
+    @Column('uuid')
+    projectId: string;
+
+    @Column('uuid')
+    assigneeId: string;
+
     @Column({
         type: 'enum',
         enum: TaskStatus,
@@ -27,11 +39,15 @@ export class TaskEntity {
     })
     status: TaskStatus;
 
-    @ManyToOne(() => ProjectEntity, {
+    @ManyToOne(() => UserEntity, (user) => user.task, {
         onDelete: 'CASCADE',
     })
-    project: ProjectEntity;
-
-    @ManyToOne(() => UserEntity, { onDelete: 'SET NULL', nullable: true })
+    @JoinColumn({ name: 'assigneeId' })
     assignee: UserEntity;
+
+    @ManyToOne(() => ProjectEntity, (project) => project.task, {
+        onDelete: 'CASCADE',
+    })
+    @JoinColumn({ name: 'projectId' })
+    project: ProjectEntity;
 }

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import { TaskStatus } from 'src/db/entities/task.entity';
 
 export class TaskDto {

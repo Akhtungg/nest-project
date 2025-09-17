@@ -5,6 +5,8 @@ import { UserModule } from './user.module';
 import { AuthModule } from './auth.module';
 import { ProjectModule } from './project.module';
 import { TaskModule } from './task.module';
+import { ProjectAccessModule } from './project-access.module';
+import { ProjectMemberModule } from './project-member.module';
 
 @Module({
     imports: [
@@ -17,6 +19,8 @@ import { TaskModule } from './task.module';
         AuthModule,
         ProjectModule,
         TaskModule,
+        ProjectAccessModule,
+        ProjectMemberModule,
     ],
     controllers: [],
     providers: [],

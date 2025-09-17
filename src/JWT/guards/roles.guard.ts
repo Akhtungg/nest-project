@@ -20,11 +20,11 @@ export class RolesGuard implements CanActivate {
             context.getHandler(),
         );
         if (!requiredRoles) {
-            return true; // Если роль не указана, доступ разрешен
+            return true;
         }
 
         const request = context.switchToHttp().getRequest();
-        const user = request.user; // Пользователь должен быть доступен в request.user после аутентификации через JwtStrategy
+        const user = request.user;
 
         if (!user) {
             throw new ForbiddenException('Вы не аутентифицированы');

@@ -10,7 +10,7 @@ export class CreateUserDto {
     password: string;
 
     @IsNotEmpty()
-    name: string;
+    fullname: string;
 
     @IsNotEmpty()
     role: GlobalRole;

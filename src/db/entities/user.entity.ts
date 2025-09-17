@@ -1,13 +1,7 @@
 import { IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
-import {
-    Column,
-    Entity,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProjectMemberEntity } from './project-member.entity';
 import { TaskEntity } from './task.entity';
-import { ProjectUserEntity } from './projectUser.entity';
 
 export enum GlobalRole {
     ADMIN = 'admin',
@@ -34,12 +28,15 @@ export class UserEntity {
 
     @Column('varchar')
     @IsNotEmpty()
-    name: string;
+    fullname: string;
 
     @Column({ type: 'enum', enum: GlobalRole, default: GlobalRole.USER })
     @IsNotEmpty()
     role: GlobalRole;
 
-    @OneToMany(() => ProjectUserEntity, (projectUser) => projectUser.user)
-    projects: ProjectUserEntity[];
+    @OneToMany(() => ProjectMemberEntity, (projectMember) => projectMember.user)
+    projectMember: ProjectMemberEntity[];
+
+    @OneToMany(() => TaskEntity, (task) => task.assignee)
+    task: TaskEntity[];
 }

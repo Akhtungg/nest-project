@@ -1,7 +1,6 @@
-import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProjectMemberEntity } from './project-member.entity';
 import { TaskEntity } from './task.entity';
-import { ProjectUserEntity } from './projectUser.entity';
 
 @Entity({ name: 'projects' })
 export class ProjectEntity {
@@ -14,6 +13,12 @@ export class ProjectEntity {
     @Column({ nullable: true })
     description: string;
 
-    @OneToMany(() => ProjectUserEntity, (projectUser) => projectUser.project)
-    users: ProjectUserEntity[];
+    @OneToMany(
+        () => ProjectMemberEntity,
+        (projectMember) => projectMember.project,
+    )
+    projectMember: ProjectMemberEntity[];
+
+    @OneToMany(() => TaskEntity, (task) => task.project)
+    task: TaskEntity[];
 }

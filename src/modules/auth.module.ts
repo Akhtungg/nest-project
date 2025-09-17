@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -30,6 +30,5 @@ import { JwtStrategy } from 'src/JWT/strategies/jwt.strategy';
     ],
     controllers: [AuthController],
     providers: [AuthService, LocalStrategy, JwtStrategy],
-    exports: [AuthService],
 })
 export class AuthModule {}
