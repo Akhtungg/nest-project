@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectEntity } from 'src/db/entities/project.entity';
-import { CreateProjectDto } from 'src/dto/create.project.dto';
+import { CreateProjectDto } from 'src/dto/create-project.dto';
 import { DataSource, Repository } from 'typeorm';
 
 @Injectable()

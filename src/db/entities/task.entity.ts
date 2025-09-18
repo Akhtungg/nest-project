@@ -7,7 +7,6 @@ import {
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { ProjectEntity } from './project.entity';
-import { ProjectRole } from './project-member.entity';
 
 export enum TaskStatus {
     TODO = 'todo',
@@ -41,6 +40,7 @@ export class TaskEntity {
 
     @ManyToOne(() => UserEntity, (user) => user.task, {
         onDelete: 'CASCADE',
+        nullable: true,
     })
     @JoinColumn({ name: 'assigneeId' })
     assignee: UserEntity;
@@ -50,4 +50,10 @@ export class TaskEntity {
     })
     @JoinColumn({ name: 'projectId' })
     project: ProjectEntity;
+
+    @Column({ default: () => "NOW() + INTERVAL '7 days'" })
+    dueDate: Date;
+
+    @Column({ default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
 }

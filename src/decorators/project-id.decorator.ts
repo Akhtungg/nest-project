@@ -4,7 +4,6 @@ export const ProjectId = createParamDecorator(
     (data: unknown, ctx: ExecutionContext) => {
         const request = ctx.switchToHttp().getRequest();
 
-        // ProjectRolesGuard уже положил projectId в request
         if (request.projectId) {
             return request.projectId;
         }

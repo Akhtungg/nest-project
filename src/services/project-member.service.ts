@@ -68,13 +68,7 @@ export class ProjectMemberService {
         );
     }
 
-    async getProjectMembers(projectId: string, userId: string) {
-        await this.projectAccessService.ensureProjectAccess(
-            userId,
-            projectId,
-            ProjectRole.VIEWER,
-        );
-
+    async getProjectMembers(projectId: string) {
         const members =
             await this.projectMemberRepository.getProjectMembersWithDetails(
                 projectId,
@@ -86,6 +80,21 @@ export class ProjectMemberService {
             fullName: member.user.fullname,
             role: member.role,
             joinedAt: member.joinedAt,
+        }));
+    }
+
+    async getProjectManagers(projectId: string) {
+        const managers =
+            await this.projectMemberRepository.getProjectManagersWithDetails(
+                projectId,
+            );
+
+        return managers.map((manager) => ({
+            id: manager.user.id,
+            email: manager.user.email,
+            fullName: manager.user.fullname,
+            role: manager.role,
+            joinedAt: manager.joinedAt,
         }));
     }
 

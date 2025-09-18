@@ -7,6 +7,8 @@ import { ProjectModule } from './project.module';
 import { TaskModule } from './task.module';
 import { ProjectAccessModule } from './project-access.module';
 import { ProjectMemberModule } from './project-member.module';
+import { DashboardModule } from './dashboard.module';
+import { NotificationsModule } from './notifications.module';
 
 @Module({
     imports: [
@@ -21,6 +23,8 @@ import { ProjectMemberModule } from './project-member.module';
         TaskModule,
         ProjectAccessModule,
         ProjectMemberModule,
+        DashboardModule,
+        NotificationsModule,
     ],
     controllers: [],
     providers: [],

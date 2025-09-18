@@ -2,11 +2,11 @@ import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { GlobalRole } from 'src/db/entities/user.entity';
 import { LocalAuthGuard } from 'src/JWT/guards/local.guard';
-import { CreateUserDto } from 'src/dto/create.user.dto';
+import { CreateUserDto } from 'src/dto/create-user.dto';
 import { AuthService } from 'src/services/auth.service';
 import { Roles } from 'src/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/JWT/guards/jwt.guard';
-import { RolesGuard } from 'src/JWT/guards/roles.guard';
+import { RolesGuard } from 'src/JWT/guards/global-roles.guard';
 
 @Controller('auth')
 @ApiTags('Auth')

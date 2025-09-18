@@ -8,7 +8,7 @@ export class ProjectEntity {
     id: string;
 
     @Column('varchar')
-    name: string;
+    title: string;
 
     @Column({ nullable: true })
     description: string;
@@ -21,4 +21,7 @@ export class ProjectEntity {
 
     @OneToMany(() => TaskEntity, (task) => task.project)
     task: TaskEntity[];
+
+    @Column({ default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
 }

@@ -6,7 +6,7 @@ export class UpdateMemberRoleDto {
     @ApiProperty({
         description: 'Новая роль пользователя в проекте',
         enum: ProjectRole,
-        example: ProjectRole.LEAD,
+        example: ProjectRole.DEVELOPER,
     })
     @IsEnum(ProjectRole)
     role: ProjectRole;

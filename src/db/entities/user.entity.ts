@@ -4,7 +4,6 @@ import { ProjectMemberEntity } from './project-member.entity';
 import { TaskEntity } from './task.entity';
 
 export enum GlobalRole {
-    ADMIN = 'admin',
     MANAGER = 'manager',
     LEAD = 'lead',
     USER = 'user',

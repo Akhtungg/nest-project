@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from 'src/db/entities/user.entity';
-import { CreateUserDto } from 'src/dto/create.user.dto';
+import { CreateUserDto } from 'src/dto/create-user.dto';
 import { DataSource, Repository } from 'typeorm';
 
 @Injectable()
@@ -25,6 +25,18 @@ export class UserRepository {
             return this.userRepository.find({});
         } catch (error) {
             throw new Error('Users not found');
+        }
+    }
+
+    async update(
+        id: string,
+        project: Partial<UserEntity>,
+    ): Promise<UserEntity> {
+        try {
+            await this.userRepository.update(id, project);
+            return this.userRepository.findOne({ where: { id } });
+        } catch {
+            throw new Error('user not found');
         }
     }
 

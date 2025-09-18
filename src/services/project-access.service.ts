@@ -1,4 +1,8 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import {
+    Injectable,
+    ForbiddenException,
+    NotFoundException,
+} from '@nestjs/common';
 import { ProjectAccessRepository } from 'src/db/repositories/project-access.repository';
 import { ProjectRole } from 'src/db/entities/project-member.entity';
 
@@ -24,7 +28,6 @@ export class ProjectAccessService {
         }
 
         const roleHierarchy = this.getRoleHierarchy();
-        console.log(`requiredRole in ensureProjectAccess: ${userRole}`);
         return roleHierarchy[userRole] >= roleHierarchy[requiredRole];
     }
 
@@ -62,8 +65,11 @@ export class ProjectAccessService {
                     userId,
                     projectId,
                 );
+            if (userRole == null) {
+                throw new NotFoundException('Project not found');
+            }
             throw new ForbiddenException(
-                `Required role: ${requiredRole}. Your role: ${userRole || 'not a member'}`,
+                `Required role: ${requiredRole}. Your role: ${userRole} `,
             );
         }
     }

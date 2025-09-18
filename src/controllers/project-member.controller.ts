@@ -22,6 +22,7 @@ import { ProjectRole } from 'src/db/entities/project-member.entity';
 import { AddMemberDto } from 'src/dto/add-member.dto';
 import { UpdateMemberRoleDto } from 'src/dto/update-member-role.dto';
 import { ProjectMemberService } from 'src/services/project-member.service';
+import { ProjectRolesGuard } from 'src/JWT/guards/project-roles.guard';
 
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -30,8 +31,9 @@ import { ProjectMemberService } from 'src/services/project-member.service';
 export class ProjectMemberController {
     constructor(private readonly projectMemberService: ProjectMemberService) {}
 
+    @UseGuards(ProjectRolesGuard)
+    @ProjectRoles(ProjectRole.MANAGER, ProjectRole.LEAD)
     @Post()
-    @ProjectRoles(ProjectRole.LEAD, ProjectRole.MANAGER)
     @ApiOperation({ summary: 'Add member to project' })
     @ApiResponse({ status: 201, description: 'Member added successfully' })
     @ApiResponse({ status: 403, description: 'Access denied' })
@@ -49,24 +51,23 @@ export class ProjectMemberController {
         );
     }
 
-    @Get()
+    @UseGuards(ProjectRolesGuard)
     @ProjectRoles(
-        ProjectRole.VIEWER,
-        ProjectRole.DEVELOPER,
-        ProjectRole.LEAD,
         ProjectRole.MANAGER,
+        ProjectRole.LEAD,
+        ProjectRole.DEVELOPER,
+        ProjectRole.VIEWER,
     )
+    @Get()
     @ApiOperation({ summary: 'Get all project members' })
     @ApiResponse({ status: 200, description: 'Returns project members' })
-    async getMembers(@Param('projectId') projectId: string, @Req() req) {
-        return this.projectMemberService.getProjectMembers(
-            projectId,
-            req.user.id,
-        );
+    async getMembers(@Param('projectId') projectId: string) {
+        return this.projectMemberService.getProjectMembers(projectId);
     }
 
+    @UseGuards(ProjectRolesGuard)
+    @ProjectRoles(ProjectRole.MANAGER, ProjectRole.LEAD)
     @Patch(':userId/role')
-    @ProjectRoles(ProjectRole.MANAGER)
     @ApiOperation({ summary: 'Update member role' })
     @ApiParam({ name: 'userId', description: 'UUID of the member to update' })
     async updateMemberRole(
@@ -83,8 +84,9 @@ export class ProjectMemberController {
         );
     }
 
+    @UseGuards(ProjectRolesGuard)
+    @ProjectRoles(ProjectRole.MANAGER, ProjectRole.LEAD)
     @Delete(':userId')
-    @ProjectRoles(ProjectRole.LEAD, ProjectRole.MANAGER)
     @ApiOperation({ summary: 'Remove member from project' })
     @ApiParam({ name: 'userId', description: 'UUID of the member to remove' })
     async removeMember(

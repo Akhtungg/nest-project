@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { TaskEntity } from 'src/db/entities/task.entity';
-import { TaskDto } from 'src/dto/task.dto';
+import { TaskEntity, TaskStatus } from 'src/db/entities/task.entity';
+import { CreateTaskDto } from 'src/dto/create-task.dto';
 import { DataSource, Repository } from 'typeorm';
 
 @Injectable()
@@ -11,20 +11,40 @@ export class TaskRepository {
         this.taskRepository = dataSource.getRepository(TaskEntity);
     }
 
-    async create(data: TaskDto): Promise<TaskEntity> {
+    async create(createData: {
+        title: string;
+        description?: string;
+        status: TaskStatus;
+        projectId: string;
+        assigneeId?: string;
+    }): Promise<TaskEntity> {
+        const task = this.taskRepository.create({
+            title: createData.title,
+            description: createData.description,
+            status: createData.status,
+            project: { id: createData.projectId },
+            assignee: createData.assigneeId
+                ? { id: createData.assigneeId }
+                : null,
+        });
+
+        return await this.taskRepository.save(task);
+    }
+
+    async findAll(projectId): Promise<TaskEntity[]> {
         try {
-            const task = this.taskRepository.create(data);
-            return await this.taskRepository.save(task);
+            return this.taskRepository.find({ where: { projectId } });
         } catch (error) {
-            throw error;
+            throw new Error('Tasks not found');
         }
     }
 
-    async findAll(): Promise<TaskEntity[]> {
+    async update(id: string, task: Partial<TaskEntity>): Promise<TaskEntity> {
         try {
-            return this.taskRepository.find({});
-        } catch (error) {
-            throw new Error('Tasks not found');
+            await this.taskRepository.update(id, task);
+            return this.taskRepository.findOne({ where: { id } });
+        } catch {
+            throw new Error('task not found');
         }
     }
 
@@ -37,10 +57,9 @@ export class TaskRepository {
     }
 
     async findById(taskId: string): Promise<TaskEntity> {
-        try {
-            return this.taskRepository.findOne({ where: { id: taskId } });
-        } catch (error) {
-            throw new Error('Task not found');
-        }
+        return this.taskRepository.findOne({
+            where: { id: taskId },
+            relations: ['assignee', 'project'],
+        });
     }
 }

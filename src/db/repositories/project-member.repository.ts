@@ -58,6 +58,19 @@ export class ProjectMemberRepository {
         });
     }
 
+    async getProjectManagersWithDetails(
+        projectId: string,
+    ): Promise<ProjectMemberEntity[]> {
+        return this.repository.find({
+            where: {
+                projectId,
+                role: ProjectRole.MANAGER,
+            },
+            relations: ['user'],
+            order: { joinedAt: 'DESC' },
+        });
+    }
+
     async findProjectUser(
         userId: string,
         projectId: string,
